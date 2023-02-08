@@ -11,6 +11,8 @@ class ControllerInformationInformation extends Controller {
 			'text' => $this->language->get('text_home'),
 			'href' => $this->url->link('common/home')
 		);
+		
+		$data['heading_title'] = $this->language->get('heading_title');
 
 		if (isset($this->request->get['information_id'])) {
 			$information_id = (int)$this->request->get['information_id'];
@@ -32,8 +34,6 @@ class ControllerInformationInformation extends Controller {
 
 			$data['heading_title'] = $information_info['title'];
 
-			$data['button_continue'] = $this->language->get('button_continue');
-
 			$data['description'] = html_entity_decode($information_info['description'], ENT_QUOTES, 'UTF-8');
 
 			$data['continue'] = $this->url->link('common/home');
@@ -45,11 +45,7 @@ class ControllerInformationInformation extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/information/information.tpl')) {
-				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/information/information.tpl', $data));
-			} else {
-				$this->response->setOutput($this->load->view('default/template/information/information.tpl', $data));
-			}
+			$this->response->setOutput($this->load->view('information/information', $data));
 		} else {
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_error'),
@@ -62,8 +58,6 @@ class ControllerInformationInformation extends Controller {
 
 			$data['text_error'] = $this->language->get('text_error');
 
-			$data['button_continue'] = $this->language->get('button_continue');
-
 			$data['continue'] = $this->url->link('common/home');
 
 			$this->response->addHeader($this->request->server['SERVER_PROTOCOL'] . ' 404 Not Found');
@@ -75,11 +69,7 @@ class ControllerInformationInformation extends Controller {
 			$data['footer'] = $this->load->controller('common/footer');
 			$data['header'] = $this->load->controller('common/header');
 
-			if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/error/not_found.tpl')) {
-				$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/error/not_found.tpl', $data));
-			} else {
-				$this->response->setOutput($this->load->view('default/template/error/not_found.tpl', $data));
-			}
+			$this->response->setOutput($this->load->view('error/not_found', $data));
 		}
 	}
 

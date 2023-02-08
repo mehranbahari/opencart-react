@@ -71,8 +71,12 @@ class ControllerApiShipping extends Controller {
 				$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
 
 				foreach ($custom_fields as $custom_field) {
-					if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
-						$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+					if ($custom_field['location'] == 'address') {
+						if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
+							$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+						} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+							$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+						}
 					}
 				}
 
@@ -131,7 +135,7 @@ class ControllerApiShipping extends Controller {
 				}
 			}
 		}
-
+		
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
@@ -156,15 +160,15 @@ class ControllerApiShipping extends Controller {
 				// Shipping Methods
 				$json['shipping_methods'] = array();
 
-				$this->load->model('extension/extension');
+				$this->load->model('setting/extension');
 
-				$results = $this->model_extension_extension->getExtensions('shipping');
+				$results = $this->model_setting_extension->getExtensions('shipping');
 
 				foreach ($results as $result) {
-					if ($this->config->get($result['code'] . '_status')) {
-						$this->load->model('shipping/' . $result['code']);
+					if ($this->config->get('shipping_' . $result['code'] . '_status')) {
+						$this->load->model('extension/shipping/' . $result['code']);
 
-						$quote = $this->{'model_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
+						$quote = $this->{'model_extension_shipping_' . $result['code']}->getQuote($this->session->data['shipping_address']);
 
 						if ($quote) {
 							$json['shipping_methods'][$result['code']] = array(

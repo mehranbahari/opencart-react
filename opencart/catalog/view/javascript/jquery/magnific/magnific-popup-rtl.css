@@ -129,11 +129,11 @@ button::-moz-focus-inner {
   text-decoration: none;
   text-align: center;
   opacity: 0.65;
-  padding: 0 10px 18px 0px;
+  padding: 0 10px 18px 0;
   color: white;
   font-style: normal;
   font-size: 28px;
-  /*font-family: Arial, Baskerville, monospace; */ }
+  font-family: Arial, Baskerville, monospace; }
   .mfp-close:hover, .mfp-close:focus {
     opacity: 1; }
   .mfp-close:active {
@@ -177,10 +177,10 @@ button::-moz-focus-inner {
     width: 0;
     height: 0;
     position: absolute;
-    left: 0;
+    right: 0;
     top: 0;
     margin-top: 35px;
-    margin-left: 35px;
+    margin-right: 35px;
     border: medium inset transparent; }
   .mfp-arrow:after, .mfp-arrow .mfp-a {
     border-top-width: 13px;
@@ -191,21 +191,21 @@ button::-moz-focus-inner {
     border-bottom-width: 21px; }
 
 .mfp-arrow-left {
-  left: 0; }
+  right: 0; }
   .mfp-arrow-left:after, .mfp-arrow-left .mfp-a {
-    border-right: 17px solid white;
-    margin-left: 31px; }
+    border-left: 17px solid white;
+    margin-right: 31px; }
   .mfp-arrow-left:before, .mfp-arrow-left .mfp-b {
-    margin-left: 25px;
-    border-right: 27px solid #3f3f3f; }
+    margin-right: 25px;
+    border-left: 27px solid #3f3f3f; }
 
 .mfp-arrow-right {
-  right: 0; }
+  left: 0; }
   .mfp-arrow-right:after, .mfp-arrow-right .mfp-a {
-    border-left: 17px solid white;
-    margin-left: 39px; }
+    border-right: 17px solid white;
+    margin-right: 39px; }
   .mfp-arrow-right:before, .mfp-arrow-right .mfp-b {
-    border-left: 27px solid #3f3f3f; }
+    border-right: 27px solid #3f3f3f; }
 
 .mfp-iframe-holder {
   padding-top: 40px;

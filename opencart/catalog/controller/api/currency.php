@@ -9,12 +9,12 @@ class ControllerApiCurrency extends Controller {
 			$json['error'] = $this->language->get('error_permission');
 		} else {
 			$this->load->model('localisation/currency');
-			
+
 			$currency_info = $this->model_localisation_currency->getCurrencyByCode($this->request->post['currency']);
-			
+
 			if ($currency_info) {
-				$this->currency->set($this->request->post['currency']);
-	
+				$this->session->data['currency'] = $this->request->post['currency'];
+
 				unset($this->session->data['shipping_method']);
 				unset($this->session->data['shipping_methods']);
 

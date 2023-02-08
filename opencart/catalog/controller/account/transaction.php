@@ -2,9 +2,9 @@
 class ControllerAccountTransaction extends Controller {
 	public function index() {
 		if (!$this->customer->isLogged()) {
-			$this->session->data['redirect'] = $this->url->link('account/transaction', '', 'SSL');
+			$this->session->data['redirect'] = $this->url->link('account/transaction', '', true);
 
-			$this->response->redirect($this->url->link('account/login', '', 'SSL'));
+			$this->response->redirect($this->url->link('account/login', '', true));
 		}
 
 		$this->load->language('account/transaction');
@@ -20,26 +20,19 @@ class ControllerAccountTransaction extends Controller {
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_account'),
-			'href' => $this->url->link('account/account', '', 'SSL')
+			'href' => $this->url->link('account/account', '', true)
 		);
 
 		$data['breadcrumbs'][] = array(
 			'text' => $this->language->get('text_transaction'),
-			'href' => $this->url->link('account/transaction', '', 'SSL')
+			'href' => $this->url->link('account/transaction', '', true)
 		);
-
-		$this->load->model('account/transaction');
-
+		
 		$data['heading_title'] = $this->language->get('heading_title');
 
-		$data['column_date_added'] = $this->language->get('column_date_added');
-		$data['column_description'] = $this->language->get('column_description');
+		$this->load->model('account/transaction');
+		
 		$data['column_amount'] = sprintf($this->language->get('column_amount'), $this->config->get('config_currency'));
-
-		$data['text_total'] = $this->language->get('text_total');
-		$data['text_empty'] = $this->language->get('text_empty');
-
-		$data['button_continue'] = $this->language->get('button_continue');
 
 		if (isset($this->request->get['page'])) {
 			$page = $this->request->get['page'];
@@ -72,15 +65,15 @@ class ControllerAccountTransaction extends Controller {
 		$pagination->total = $transaction_total;
 		$pagination->page = $page;
 		$pagination->limit = 10;
-		$pagination->url = $this->url->link('account/transaction', 'page={page}', 'SSL');
+		$pagination->url = $this->url->link('account/transaction', 'page={page}', true);
 
 		$data['pagination'] = $pagination->render();
 
 		$data['results'] = sprintf($this->language->get('text_pagination'), ($transaction_total) ? (($page - 1) * 10) + 1 : 0, ((($page - 1) * 10) > ($transaction_total - 10)) ? $transaction_total : ((($page - 1) * 10) + 10), $transaction_total, ceil($transaction_total / 10));
 
-		$data['total'] = $this->currency->format($this->customer->getBalance());
+		$data['total'] = $this->currency->format($this->customer->getBalance(), $this->session->data['currency']);
 
-		$data['continue'] = $this->url->link('account/account', '', 'SSL');
+		$data['continue'] = $this->url->link('account/account', '', true);
 
 		$data['column_left'] = $this->load->controller('common/column_left');
 		$data['column_right'] = $this->load->controller('common/column_right');
@@ -89,10 +82,6 @@ class ControllerAccountTransaction extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/account/transaction.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/account/transaction.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/account/transaction.tpl', $data));
-		}
+		$this->response->setOutput($this->load->view('account/transaction', $data));
 	}
 }

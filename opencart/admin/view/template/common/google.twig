@@ -1,0 +1,8 @@
+<script src="//www.google.com/recaptcha/api.js" type="text/javascript"></script>
+<div class="form-group">
+  <label for="input-captcha">{{ text_captcha }}</label>
+  <div class="g-recaptcha" data-sitekey="{{ site_key }}"></div>
+  {% if error_captcha %}
+  <div class="text-danger">{{ error_captcha }}</div>
+  {% endif %}
+</div>

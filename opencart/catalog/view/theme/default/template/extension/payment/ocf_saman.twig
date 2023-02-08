@@ -1,0 +1,13 @@
+<form action="{{ action }}" method="post" id="payment">
+  <input type="hidden" name="Amount" value="{{ Amount }}" />
+  <input type="hidden" name="MID" value="{{ merchant_id }}" />
+  <input type="hidden" name="RedirectURL" value="{{ RedirectURL }}" />
+  <input type="hidden" name="ResNum" value="{{ ResNum }}" />
+
+<div class="buttons">
+  <div class="pull-right">
+    <input type="button" onclick="$('#payment').submit();" value="{{ button_confirm }}" class="btn btn-primary" data-loading-text="{{ text_loading }}" />
+  </div>
+</div>
+</form>
+

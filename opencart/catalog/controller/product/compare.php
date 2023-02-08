@@ -16,9 +16,9 @@ class ControllerProductCompare extends Controller {
 
 			if ($key !== false) {
 				unset($this->session->data['compare'][$key]);
-			}
 
-			$this->session->data['success'] = $this->language->get('text_remove');
+				$this->session->data['success'] = $this->language->get('text_remove');
+			}
 
 			$this->response->redirect($this->url->link('product/compare'));
 		}
@@ -36,25 +36,6 @@ class ControllerProductCompare extends Controller {
 			'text' => $this->language->get('heading_title'),
 			'href' => $this->url->link('product/compare')
 		);
-
-		$data['heading_title'] = $this->language->get('heading_title');
-
-		$data['text_product'] = $this->language->get('text_product');
-		$data['text_name'] = $this->language->get('text_name');
-		$data['text_image'] = $this->language->get('text_image');
-		$data['text_price'] = $this->language->get('text_price');
-		$data['text_model'] = $this->language->get('text_model');
-		$data['text_manufacturer'] = $this->language->get('text_manufacturer');
-		$data['text_availability'] = $this->language->get('text_availability');
-		$data['text_rating'] = $this->language->get('text_rating');
-		$data['text_summary'] = $this->language->get('text_summary');
-		$data['text_weight'] = $this->language->get('text_weight');
-		$data['text_dimension'] = $this->language->get('text_dimension');
-		$data['text_empty'] = $this->language->get('text_empty');
-
-		$data['button_continue'] = $this->language->get('button_continue');
-		$data['button_cart'] = $this->language->get('button_cart');
-		$data['button_remove'] = $this->language->get('button_remove');
 
 		if (isset($this->session->data['success'])) {
 			$data['success'] = $this->session->data['success'];
@@ -75,19 +56,19 @@ class ControllerProductCompare extends Controller {
 
 			if ($product_info) {
 				if ($product_info['image']) {
-					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('config_image_compare_width'), $this->config->get('config_image_compare_height'));
+					$image = $this->model_tool_image->resize($product_info['image'], $this->config->get('theme_' . $this->config->get('config_theme') . '_image_compare_width'), $this->config->get('theme_' . $this->config->get('config_theme') . '_image_compare_height'));
 				} else {
 					$image = false;
 				}
 
-				if (($this->config->get('config_customer_price') && $this->customer->isLogged()) || !$this->config->get('config_customer_price')) {
-					$price = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+				if ($this->customer->isLogged() || !$this->config->get('config_customer_price')) {
+					$price = $this->currency->format($this->tax->calculate($product_info['price'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$price = false;
 				}
 
 				if ((float)$product_info['special']) {
-					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')));
+					$special = $this->currency->format($this->tax->calculate($product_info['special'], $product_info['tax_class_id'], $this->config->get('config_tax')), $this->session->data['currency']);
 				} else {
 					$special = false;
 				}
@@ -153,11 +134,7 @@ class ControllerProductCompare extends Controller {
 		$data['footer'] = $this->load->controller('common/footer');
 		$data['header'] = $this->load->controller('common/header');
 
-		if (file_exists(DIR_TEMPLATE . $this->config->get('config_template') . '/template/product/compare.tpl')) {
-			$this->response->setOutput($this->load->view($this->config->get('config_template') . '/template/product/compare.tpl', $data));
-		} else {
-			$this->response->setOutput($this->load->view('default/template/product/compare.tpl', $data));
-		}
+		$this->response->setOutput($this->load->view('product/compare', $data));
 	}
 
 	public function add() {

@@ -1,0 +1,51 @@
+<fieldset id="payment"></fieldset>
+<div class="buttons">
+  <div class="pull-right">
+    <input type="button" value="{{ button_confirm }}" id="button-confirm" data-loading-text="{{ text_loading }}" class="btn btn-primary" />
+  </div>
+</div>
+<script type="text/javascript"><!--
+$('#button-confirm').bind('click', function() {
+	$.ajax({
+		type: 'post',
+		dataType: 'json',
+		url: 'index.php?route=extension/payment/ocf_mellat/confirm',
+		//cache: false,
+		data: $('#payment :input'),
+		beforeSend: function() {
+			$('#button-confirm').attr('disabled', true);
+			$('#payment').before('<div class="alert alert-info"><i class="fa fa-info-circle"></i> {{ text_wait }}</div>');
+		},
+		complete: function() {
+			$('#button-confirm').attr('disabled', false);
+			$('.alert-info').remove();
+		},
+		success: function(json) {
+			if (json['error']) {
+				$('#payment').before('<div class="alert alert-danger"><i class="fa fa-info-exclamation"></i>' + json['error'] + '</div>');
+				$('#button-confirm').attr('disabled', false);
+			}
+			
+			$('.alert-info').remove();
+			if (json['action'] && json['refId']) {
+					
+				var data_action = json['action'] ? json['action'] : "";
+				var data_refId = json['refId'] ? json['refId'] : "";
+				
+				var form = document.createElement("form");
+				form.setAttribute("method", "POST");
+				form.setAttribute("action", data_action);
+				form.setAttribute("target", "_self");
+				var hiddenField = document.createElement("input");              
+				hiddenField.setAttribute("name", "RefId");
+				hiddenField.setAttribute("value", data_refId);
+				form.appendChild(hiddenField);
+
+				document.body.appendChild(form);
+				form.submit();
+				document.body.removeChild(form);
+			}
+		}
+	});
+});
+//--></script>

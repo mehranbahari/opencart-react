@@ -70,8 +70,12 @@ class ControllerApiPayment extends Controller {
 			$custom_fields = $this->model_account_custom_field->getCustomFields($this->config->get('config_customer_group_id'));
 
 			foreach ($custom_fields as $custom_field) {
-				if (($custom_field['location'] == 'address') && $custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['custom_field_id']])) {
-					$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+				if ($custom_field['location'] == 'address') {
+					if ($custom_field['required'] && empty($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']])) {
+						$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+					} elseif (($custom_field['type'] == 'text') && !empty($custom_field['validation']) && !filter_var($this->request->post['custom_field'][$custom_field['location']][$custom_field['custom_field_id']], FILTER_VALIDATE_REGEXP, array('options' => array('regexp' => $custom_field['validation'])))) {
+						$json['error']['custom_field' . $custom_field['custom_field_id']] = sprintf($this->language->get('error_custom_field'), $custom_field['name']);
+					}
 				}
 			}
 
@@ -124,7 +128,7 @@ class ControllerApiPayment extends Controller {
 				);
 
 				$json['success'] = $this->language->get('text_address');
-
+				
 				unset($this->session->data['payment_method']);
 				unset($this->session->data['payment_methods']);
 			}
@@ -136,7 +140,7 @@ class ControllerApiPayment extends Controller {
 
 	public function methods() {
 		$this->load->language('api/payment');
-
+		
 		// Delete past shipping methods and method just in case there is an error
 		unset($this->session->data['payment_methods']);
 		unset($this->session->data['payment_method']);
@@ -150,51 +154,59 @@ class ControllerApiPayment extends Controller {
 			if (!isset($this->session->data['payment_address'])) {
 				$json['error'] = $this->language->get('error_address');
 			}
-
+			
 			if (!$json) {
 				// Totals
-				$total_data = array();
-				$total = 0;
+				$totals = array();
 				$taxes = $this->cart->getTaxes();
+				$total = 0;
 
-				$this->load->model('extension/extension');
+				// Because __call can not keep var references so we put them into an array. 
+				$total_data = array(
+					'totals' => &$totals,
+					'taxes'  => &$taxes,
+					'total'  => &$total
+				);
+
+				$this->load->model('setting/extension');
 
 				$sort_order = array();
 
-				$results = $this->model_extension_extension->getExtensions('total');
+				$results = $this->model_setting_extension->getExtensions('total');
 
 				foreach ($results as $key => $value) {
-					$sort_order[$key] = $this->config->get($value['code'] . '_sort_order');
+					$sort_order[$key] = $this->config->get('total_' . $value['code'] . '_sort_order');
 				}
 
 				array_multisort($sort_order, SORT_ASC, $results);
 
 				foreach ($results as $result) {
-					if ($this->config->get($result['code'] . '_status')) {
-						$this->load->model('total/' . $result['code']);
-
-						$this->{'model_total_' . $result['code']}->getTotal($total_data, $total, $taxes);
+					if ($this->config->get('total_' . $result['code'] . '_status')) {
+						$this->load->model('extension/total/' . $result['code']);
+						
+						// We have to put the totals in an array so that they pass by reference.
+						$this->{'model_extension_total_' . $result['code']}->getTotal($total_data);
 					}
 				}
 
 				// Payment Methods
 				$json['payment_methods'] = array();
 
-				$this->load->model('extension/extension');
+				$this->load->model('setting/extension');
 
-				$results = $this->model_extension_extension->getExtensions('payment');
+				$results = $this->model_setting_extension->getExtensions('payment');
 
 				$recurring = $this->cart->hasRecurringProducts();
 
 				foreach ($results as $result) {
-					if ($this->config->get($result['code'] . '_status')) {
-						$this->load->model('payment/' . $result['code']);
+					if ($this->config->get('payment_' . $result['code'] . '_status')) {
+						$this->load->model('extension/payment/' . $result['code']);
 
-						$method = $this->{'model_payment_' . $result['code']}->getMethod($this->session->data['payment_address'], $total);
+						$method = $this->{'model_extension_payment_' . $result['code']}->getMethod($this->session->data['payment_address'], $total);
 
 						if ($method) {
 							if ($recurring) {
-								if (method_exists($this->{'model_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_payment_' . $result['code']}->recurringPayments()) {
+								if (property_exists($this->{'model_extension_payment_' . $result['code']}, 'recurringPayments') && $this->{'model_extension_payment_' . $result['code']}->recurringPayments()) {
 									$json['payment_methods'][$result['code']] = $method;
 								}
 							} else {

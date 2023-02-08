@@ -3,12 +3,12 @@ class ControllerCommonReset extends Controller {
 	private $error = array();
 
 	public function index() {
-		if ($this->user->isLogged() && isset($this->request->get['token']) && ($this->request->get['token'] == $this->session->data['token'])) {
-			$this->response->redirect($this->url->link('common/dashboard', '', 'SSL'));
+		if ($this->user->isLogged() && isset($this->request->get['user_token']) && ($this->request->get['user_token'] == $this->session->data['user_token'])) {
+			$this->response->redirect($this->url->link('common/dashboard', '', true));
 		}
 
 		if (!$this->config->get('config_password')) {
-			$this->response->redirect($this->url->link('common/login', '', 'SSL'));
+			$this->response->redirect($this->url->link('common/login', '', true));
 		}
 
 		if (isset($this->request->get['code'])) {
@@ -31,29 +31,19 @@ class ControllerCommonReset extends Controller {
 
 				$this->session->data['success'] = $this->language->get('text_success');
 
-				$this->response->redirect($this->url->link('common/login', '', 'SSL'));
+				$this->response->redirect($this->url->link('common/login', '', true));
 			}
-
-			$data['heading_title'] = $this->language->get('heading_title');
-
-			$data['text_password'] = $this->language->get('text_password');
-
-			$data['entry_password'] = $this->language->get('entry_password');
-			$data['entry_confirm'] = $this->language->get('entry_confirm');
-
-			$data['button_save'] = $this->language->get('button_save');
-			$data['button_cancel'] = $this->language->get('button_cancel');
 
 			$data['breadcrumbs'] = array();
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('text_home'),
-				'href' => $this->url->link('common/dashboard', '', 'SSL')
+				'href' => $this->url->link('common/dashboard', '', true)
 			);
 
 			$data['breadcrumbs'][] = array(
 				'text' => $this->language->get('heading_title'),
-				'href' => $this->url->link('common/reset', '', 'SSL')
+				'href' => $this->url->link('common/reset', '', true)
 			);
 
 			if (isset($this->error['password'])) {
@@ -68,9 +58,9 @@ class ControllerCommonReset extends Controller {
 				$data['error_confirm'] = '';
 			}
 
-			$data['action'] = $this->url->link('common/reset', 'code=' . $code, 'SSL');
+			$data['action'] = $this->url->link('common/reset', 'code=' . $code, true);
 
-			$data['cancel'] = $this->url->link('common/login', '', 'SSL');
+			$data['cancel'] = $this->url->link('common/login', '', true);
 
 			if (isset($this->request->post['password'])) {
 				$data['password'] = $this->request->post['password'];
@@ -87,7 +77,7 @@ class ControllerCommonReset extends Controller {
 			$data['header'] = $this->load->controller('common/header');
 			$data['footer'] = $this->load->controller('common/footer');
 
-			$this->response->setOutput($this->load->view('common/reset.tpl', $data));
+			$this->response->setOutput($this->load->view('common/reset', $data));
 		} else {
 			$this->load->model('setting/setting');
 
@@ -98,7 +88,7 @@ class ControllerCommonReset extends Controller {
 	}
 
 	protected function validate() {
-		if ((utf8_strlen($this->request->post['password']) < 4) || (utf8_strlen($this->request->post['password']) > 20)) {
+		if ((utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) < 4) || (utf8_strlen(html_entity_decode($this->request->post['password'], ENT_QUOTES, 'UTF-8')) > 40)) {
 			$this->error['password'] = $this->language->get('error_password');
 		}
 
