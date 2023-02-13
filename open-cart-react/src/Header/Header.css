@@ -1,0 +1,47 @@
+.header {
+  background-color: #eeeeee;
+  border-bottom: 1px solid #ccc;
+}
+.wrapper-header-nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+ul,
+li {
+  list-style: none;
+}
+.header-list {
+  display: flex;
+  gap: 1rem;
+}
+.header-list {
+  padding: 15px 0;
+  font-size: 17px;
+}
+.header-list > li {
+  color: #888888;
+  /* color: rgb(88, 88, 88); */
+  position: relative;
+}
+.header-list > li:hover > span,
+.header-list > li:hover > i {
+  color: rgb(88, 88, 88);
+  cursor: pointer;
+}
+.header-list > li > span {
+  padding-right: 8px;
+}
+.subitem-money,
+.subitem-languge ,.subitem-Account {
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  text-align: center;
+  padding: 20px 30px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, 40%);
+  display: none;
+}
