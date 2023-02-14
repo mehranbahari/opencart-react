@@ -21,7 +21,6 @@ li {
 }
 .header-list > li {
   color: #888888;
-  /* color: rgb(88, 88, 88); */
   position: relative;
 }
 .header-list > li:hover > span,
@@ -32,16 +31,54 @@ li {
 .header-list > li > span {
   padding-right: 8px;
 }
+.right .header-list > li {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
 .subitem-money,
-.subitem-languge ,.subitem-Account {
+.subitem-languge,
+.subitem-Account {
+  padding: 20px 30px;
   background-color: #fff;
   border: 1px solid #ccc;
   border-radius: 10px;
   text-align: center;
-  padding: 20px 30px;
   position: absolute;
   top: 0;
   left: 0;
-  transform: translate(-50%, 40%);
+  transform: translate(-50%, 35%);
   display: none;
+}
+.subitem-money > li,
+.subitem-languge > li,
+.subitem-Account > li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0;
+  cursor: pointer;
+}
+.subitem-Account {
+  padding: 0;
+  width: 140px;
+  height: 90px;
+}
+.subitem-Account > li:hover {
+  width: 100%;
+  margin-bottom: 2px;
+  background-color: aqua;
+  color: #fff;
+  cursor: pointer;
+}
+.flag {
+  width: 20px;
+  object-position: center;
+  object-fit: cover;
+}
+
+@media (max-width: 1200px) {
+  .header-list > li > span {
+    display: none;
+  }
 }

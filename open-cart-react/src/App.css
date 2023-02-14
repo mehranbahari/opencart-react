@@ -9,8 +9,12 @@
 .container {
   max-width: 1200px;
   margin: 0 auto;
+  padding: 0 20px;
 }
-img{
+img {
   width: 100%;
   display: block;
+}
+.app {
+  padding-bottom: 100px;
 }

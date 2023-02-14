@@ -1,14 +1,15 @@
-import CartShop from "./CartShop/CartShop";
+import CardProducts from "./CardProducts/CardProducts";
 import Header from "./Header/Header";
 import Search from "./Search/search";
+import SliderTop from "./SliderTop/SliderTop";
 
 const App = () => {
   return (
-    <div>
+    <div className="app">
       <Header />
-      <Search />
-      <CartShop />
-      Mehran
+        <Search />
+        <SliderTop />
+      <CardProducts />
     </div>
   );
 };

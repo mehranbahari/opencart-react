@@ -1,0 +1,25 @@
+.btn-cardshop {
+  width: 100%;
+  background: linear-gradient(
+    0deg,
+    rgba(52, 49, 49, 1) 0%,
+    rgba(75, 73, 73, 1) 100%
+  );
+
+  border: none;
+  border-radius: 5px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.btn-cardshop:hover {
+  background: #000;
+  cursor: pointer;
+}
+.btn-cardshop > .btn-product,
+.btn-cardshop > .btn-money {
+  padding: 10px 5px;
+  font-size: 17px;
+}

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import "./Search.css";
 import logo from '../assets/images/logo.png'
+import CartShop from  "../CartShop/CartShop"
 
 const search = () => {
   const [textSearch, setTextSearch] = useState("");
@@ -12,7 +13,7 @@ const search = () => {
   };
 
   return (
-    <div className="search-wrapper">
+    <div className="search-wrapper container">
       <div className="logo">
         <img src={logo} alt="" />
       </div>
@@ -27,6 +28,10 @@ const search = () => {
         <button onSubmit={submitHanldler}> &otimes;</button>
       </form>
       </div>
+      <div className="cart-shop">
+        <CartShop />
+      </div>
+
      
     </div>
   );
